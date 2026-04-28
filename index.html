@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>🐐 Messi Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--s1:#0e1220;--s2:#151c30;--s3:#1c2440;--gold:#d4a017;--gold2:#f2c94c;--blue:#1a56db;--text:#e8eaf5;--sub:#6a7490;--r:14px;--safe:env(safe-area-inset-bottom,16px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{color:var(--text);font-family:"Barlow Condensed",sans-serif;display:flex;flex-direction:column}
+.hdr{flex-shrink:0;background:rgba(7,9,15,.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05);padding:10px 14px 0;z-index:50}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.logo-row{display:flex;align-items:center;gap:8px}
+.logo-img{width:44px;height:38px;object-fit:contain;flex-shrink:0}
+.search-inline{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.search-toggle{background:none;border:none;font-size:20px;cursor:pointer;padding:4px;line-height:1;opacity:.7;transition:opacity .2s;flex-shrink:0;filter:brightness(0) saturate(100%) invert(78%) sepia(60%) saturate(400%) hue-rotate(5deg)}
+.search-toggle.active{opacity:1}
+.search-expand{display:flex;align-items:center;gap:5px}
+.search-input-inline{background:var(--s2);border:1.5px solid rgba(255,255,255,.12);border-radius:18px;padding:7px 12px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:13px;outline:none;width:130px;transition:border-color .2s,width .25s;-webkit-appearance:none}
+.search-input-inline:focus{border-color:var(--blue)}
+.search-input-inline::placeholder{color:var(--sub)}
+.search-clear{background:none;border:none;color:var(--sub);font-size:16px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0}
+/* PROGRESS */
+.progress-wrap{margin:10px 10px 0;background:var(--s1);border-radius:14px;padding:14px;border:1px solid rgba(255,255,255,.06)}
+.progress-title{font-family:"Bebas Neue",sans-serif;font-size:17px;letter-spacing:1.5px;color:var(--gold2);margin-bottom:12px}
+.prog-row{margin-bottom:10px}
+.prog-row-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.prog-club{font-size:12px;font-weight:700;color:var(--text)}
+.prog-count{font-size:11px;font-weight:700;color:var(--sub)}
+.prog-bar-bg{height:8px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.prog-total-row{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
+.prog-donut-wrap{position:relative;width:70px;height:70px;flex-shrink:0}
+.prog-donut-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.prog-donut-pct{font-family:"Bebas Neue",sans-serif;font-size:18px;color:var(--gold2);line-height:1}
+.prog-donut-sub{font-size:8px;color:var(--sub);font-weight:700;letter-spacing:.3px}
+.prog-total-text{flex:1}
+.prog-total-num{font-family:"Bebas Neue",sans-serif;font-size:26px;color:var(--gold2);line-height:1}
+.prog-total-lbl{font-size:11px;color:var(--sub);font-weight:600;margin-top:2px}
+.logo-text{font-family:"Bebas Neue",sans-serif;font-size:23px;letter-spacing:3px;background:linear-gradient(120deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.logo-sub{font-size:10px;letter-spacing:.7px;-webkit-text-fill-color:var(--sub);margin-top:1px}
+.chips-row{display:flex;gap:5px;padding:6px 0 0;overflow-x:auto;scrollbar-width:none}
+.chips-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:5px 11px;border-radius:16px;border:1.5px solid rgba(255,255,255,.08);background:transparent;color:var(--sub);font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.chip.on{background:rgba(212,160,23,.18);border-color:var(--gold);color:var(--gold2)}
+.main-tabs{display:flex;gap:0;border-bottom:2px solid rgba(255,255,255,.04);margin-top:6px}
+.mtab{flex:1;padding:9px 4px;font-size:12px;font-weight:800;color:var(--sub);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;text-align:center;white-space:nowrap;letter-spacing:.2px}
+.mtab.on{color:var(--gold2);border-bottom-color:var(--gold)}
+.scroll{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 10px 6px}
+.filter-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--s2);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.filter-btn.active{border-color:var(--gold);color:var(--gold2);background:rgba(212,160,23,.1)}
+.sort-btn{display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 0;background:var(--s2);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;color:var(--sub);font-family:"Barlow Condensed",sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;width:118px;flex-shrink:0}
+.season-hdr{font-family:"Bebas Neue",sans-serif;font-size:16px;letter-spacing:1.5px;color:var(--gold2);padding:14px 10px 6px;display:flex;align-items:center;gap:6px;border-top:1px solid rgba(255,255,255,.05);margin-top:4px}
+.season-hdr small{font-size:10px;font-weight:600;font-family:"Barlow Condensed",sans-serif;color:var(--sub)}
+.grid-wrap{padding:0 10px;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;padding-bottom:4px}
+.pb-safe{height:calc(72px + var(--safe));flex-shrink:0}
+.empty{text-align:center;padding:50px 20px;color:var(--sub);font-size:14px;line-height:1.8}
+.card{background:var(--s1);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:transform .18s;animation:up .3s ease both;position:relative}
+.card:active{transform:scale(.95)}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card-img{position:relative;background:var(--s2);height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card-img img{max-width:100%;max-height:160px;width:auto;height:auto;object-fit:contain;display:block}
+.badge-cat{position:absolute;top:6px;left:6px;font-size:8px;font-weight:800;letter-spacing:.3px;padding:3px 8px;border-radius:6px;line-height:1.4}
+.bc-orig{background:#1a56db;color:#fff}
+.bc-orig-num{background:#b87a00;color:#fff}
+.bc-china{background:#b01a1a;color:#fff}
+.bc-trucha{background:#3a3a50;color:#ccc}
+.fav-star{position:absolute;top:4px;right:5px;font-size:21px;cursor:pointer;transition:transform .2s;z-index:5;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+.fav-star:active{transform:scale(1.3)}
+.card-info{padding:6px 9px 2px}
+.card-club{font-size:9px;font-weight:800;letter-spacing:1px;color:var(--gold);text-transform:uppercase}
+.card-name{font-size:12px;font-weight:700;line-height:1.2;margin:1px 0}
+.card-year{font-size:10px;color:var(--sub)}
+.card-foot{display:flex;align-items:center;justify-content:space-between;padding:2px 9px 7px}
+.card-num{font-family:"Bebas Neue",sans-serif;font-size:26px;color:rgba(255,255,255,.07);line-height:1}
+.stars{font-size:10px}
+.cat-card{background:var(--s1);border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;cursor:pointer;position:relative;transition:transform .15s}
+.cat-card:active{transform:scale(.96)}
+.owned-chip{position:absolute;top:5px;right:5px;background:var(--gold);color:#000;font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;z-index:2}
+.cat-img{height:110px;background:var(--s2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cat-img img{max-width:100%;max-height:110px;width:auto;height:auto;object-fit:contain}
+.cat-info{padding:5px 8px 4px}
+.cat-yr{font-size:9px;font-weight:700;color:var(--sub)}
+.cat-name{font-size:11px;font-weight:700;line-height:1.2}
+.add-cat-btn{width:100%;padding:7px;background:linear-gradient(135deg,var(--blue),#0a3fa0);border:none;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;cursor:pointer}
+.cat-chips-row{display:flex;gap:5px;padding:0 10px 6px;overflow-x:auto;scrollbar-width:none}
+.cat-chips-row::-webkit-scrollbar{display:none}
+.cchip{flex-shrink:0;padding:5px 11px;border-radius:16px;border:1.5px solid rgba(255,255,255,.08);background:transparent;color:var(--sub);font-family:"Barlow Condensed",sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.cchip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.cchip.type-chip.on{background:var(--s3);border-color:rgba(255,255,255,.2);color:var(--text)}
+.drawer-wrap{position:fixed;inset:0;z-index:300;display:flex;flex-direction:column;justify-content:flex-end;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-wrap.open{opacity:1;pointer-events:all}
+.drawer-bg{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px)}
+.drawer{position:relative;background:var(--s1);border-radius:22px 22px 0 0;padding-bottom:calc(16px + var(--safe));transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,0,1)}
+.drawer-wrap.open .drawer{transform:translateY(0)}
+.d-handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:14px auto 16px}
+.d-title{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:2px;padding:0 18px;margin-bottom:14px;background:linear-gradient(120deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.d-sec{padding:0 18px;margin-bottom:14px}
+.d-lbl{font-size:10px;font-weight:800;color:var(--sub);letter-spacing:.7px;margin-bottom:7px}
+.d-opts{display:flex;flex-wrap:wrap;gap:7px}
+.dopt{padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,.1);background:transparent;color:var(--sub);font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.dopt.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.d-apply{width:calc(100% - 36px);margin:4px 18px 0;padding:14px;background:linear-gradient(135deg,var(--blue),#0a3fa0);border:none;border-radius:13px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;cursor:pointer}
+.nav{flex-shrink:0;background:rgba(7,9,15,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-around;padding:7px 0 calc(7px + var(--safe))}
+.nav-i{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:9px;font-weight:700;color:var(--sub);cursor:pointer;padding:3px 14px;transition:color .2s}
+.nav-i .ico{font-size:19px}
+.nav-i.on{color:var(--gold2)}
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .25s}
+.overlay.open{opacity:1;pointer-events:all}
+.sheet{width:100%;background:var(--s1);border-radius:22px 22px 0 0;max-height:93dvh;overflow-y:auto;transform:translateY(100%);transition:transform .32s cubic-bezier(.32,.72,0,1)}
+.overlay.open .sheet{transform:translateY(0)}
+.sheet::-webkit-scrollbar{display:none}
+.handle{width:36px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;margin:13px auto 15px}
+.sh2{font-family:"Bebas Neue",sans-serif;font-size:24px;letter-spacing:2px;padding:0 15px;margin-bottom:12px;background:linear-gradient(120deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.fw{padding:0 15px}
+.field{margin-bottom:10px}
+.field label{font-size:10px;font-weight:800;color:var(--sub);letter-spacing:.6px;display:block;margin-bottom:4px}
+.field select,.field input{width:100%;background:var(--s2);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:14px;outline:none;-webkit-appearance:none}
+.row2{display:flex;gap:7px}.row2 .field{flex:1}
+.save-btn{width:calc(100% - 30px);margin:10px 15px calc(10px + var(--safe));padding:14px;background:linear-gradient(135deg,var(--blue),#0a3fa0);border:none;border-radius:12px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:15px;font-weight:700;cursor:pointer}
+.det-hero{margin:0 13px 12px;border-radius:14px;background:var(--s2);height:220px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.det-hero img{max-width:100%;max-height:220px;width:auto;height:auto;object-fit:contain}
+.det-meta{padding:0 14px}
+.det-club{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--gold);margin-bottom:1px}
+.det-name{font-family:"Bebas Neue",sans-serif;font-size:23px;line-height:1.1;margin-bottom:4px}
+.det-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:11px}
+.tag{font-size:9px;font-weight:800;letter-spacing:.3px;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.08);color:var(--sub)}
+.tag.g{background:rgba(212,160,23,.2);color:var(--gold2)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 14px 11px}
+.stat-box{background:var(--s2);border-radius:10px;padding:9px 11px;border:1px solid rgba(255,255,255,.06)}
+.stat-val{font-family:"Bebas Neue",sans-serif;font-size:26px;color:var(--gold2);line-height:1}
+.stat-lbl{font-size:9px;font-weight:800;color:var(--sub);letter-spacing:.4px;margin-top:1px}
+.titles-sec{margin:0 14px 13px}
+.titles-lbl{font-size:10px;font-weight:800;color:var(--sub);letter-spacing:.6px;margin-bottom:5px}
+.titles-list{display:flex;flex-wrap:wrap;gap:5px}
+.title-chip{background:linear-gradient(135deg,rgba(212,160,23,.2),rgba(242,201,76,.1));border:1px solid rgba(212,160,23,.25);color:var(--gold2);font-size:10px;font-weight:700;padding:4px 10px;border-radius:18px}
+.no-titles{font-size:12px;color:var(--sub);font-style:italic}
+.det-acts{display:flex;gap:8px;padding:0 14px;margin-bottom:calc(14px + var(--safe))}
+.btn-del{flex:1;padding:12px;border:1.5px solid rgba(220,53,69,.3);border-radius:12px;background:rgba(220,53,69,.08);color:#ff7070;font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.btn-cls{flex:1;padding:12px;background:var(--s2);border:none;border-radius:12px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.btn-add{flex:2;padding:12px;background:linear-gradient(135deg,var(--blue),#0a3fa0);border:none;border-radius:12px;color:#fff;font-family:"Barlow Condensed",sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.in-sel{width:100%;background:var(--s2);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 12px;color:var(--text);font-family:"Barlow Condensed",sans-serif;font-size:14px;outline:none;-webkit-appearance:none;margin-bottom:7px}
+.in-lbl{font-size:10px;font-weight:800;color:var(--sub);letter-spacing:.6px;display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo-row">
+      <img id="logoImg" class="logo-img" alt="Messi">
+      <div><div class="logo-text">Messi Collection</div><div class="logo-sub">Mi colección personal</div></div>
+    </div>
+    <div class="search-inline" id="searchInline">
+      <button class="search-toggle" id="searchToggle" onclick="toggleSearch()">🔍</button>
+      <div class="search-expand" id="searchExpand" style="display:none">
+        <input class="search-input-inline" id="searchInput" type="search" placeholder="Buscar..." oninput="onSearch(this.value)" autofocus>
+        <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+      </div>
+    </div>
+  </div>
+  <div class="main-tabs">
+    <div class="mtab on" data-tab="col" onclick="switchTab(this)">Mi Colección</div>
+    <div class="mtab" data-tab="missing" onclick="switchTab(this)">Las que faltan</div>
+    <div class="mtab" data-tab="cat" onclick="switchTab(this)">Catálogo</div>
+  </div>
+</div>
+
+<div class="scroll" id="scroll"><div id="inner"></div></div>
+
+<div class="nav">
+  <div class="nav-i on" id="ni-col" onclick="navTo('col')"><span class="ico">👕</span>Colección</div>
+  <div class="nav-i" id="ni-favs" onclick="navTo('favs')"><span class="ico">⭐</span>Favoritos</div>
+  <div class="nav-i" id="ni-progress" onclick="navTo('progress')"><span class="ico">📊</span>Progreso</div>
+</div>
+
+<div class="drawer-wrap" id="drawerWrap">
+  <div class="drawer-bg" onclick="closeDrawer()"></div>
+  <div class="drawer">
+    <div class="d-handle"></div>
+    <div class="d-title">Filtrar</div>
+    <div class="d-sec"><div class="d-lbl">CLUB / SELECCIÓN</div><div class="d-opts" id="dClubs"></div></div>
+    <div class="d-sec"><div class="d-lbl">EQUIPACIÓN</div><div class="d-opts" id="dTypes"></div></div>
+    <button class="d-apply" onclick="applyDrawer()">Aplicar</button>
+  </div>
+</div>
+
+<div class="overlay" id="addOv" onclick="bgc(event,'addOv')">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sh2">Nueva Camiseta</div>
+    <div class="fw">
+      <div class="field"><label>NOMBRE</label><input id="fn" placeholder="ej. Home 2008-09"></div>
+      <div class="row2">
+        <div class="field"><label>CLUB</label><select id="fc"><option>Barcelona</option><option>PSG</option><option>Inter Miami</option><option>Argentina</option></select></div>
+        <div class="field"><label>AÑO</label><input id="fy" type="number" placeholder="2009"></div>
+      </div>
+      <div class="field"><label>CATEGORÍA</label>
+        <select id="fcat"><option value="orig">🔵 Original sin número</option><option value="orig-num">🟡 Original con número</option><option value="china">🔴 China / Tailandesa AAA</option><option value="trucha">⚫ Trucha sin número</option></select>
+      </div>
+      <div class="row2">
+        <div class="field"><label>EQUIPACIÓN</label><select id="ftype"><option value="home">Titular</option><option value="away">Suplente</option><option value="third">Tercera</option></select></div>
+        <div class="field"><label>CONDICIÓN</label><select id="fcond"><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div>
+      </div>
+    </div>
+    <button class="save-btn" onclick="saveCustom()">Guardar</button>
+  </div>
+</div>
+
+<div class="overlay" id="detOv" onclick="bgc(event,'detOv')"><div class="sheet" id="detSheet"></div></div>
+
+<script>
+const IMGS=["images/0.png", "images/1.png", "images/2.png", "images/3.png", "images/4.png", "images/5.png", "images/6.png", "images/7.png", "images/8.png", "images/9.png", "images/10.png", "images/11.png", "images/12.png", "images/13.png", "images/14.png", "images/15.png", "images/16.png", "images/17.png", "images/18.png", "images/19.png", "images/20.png", "images/21.png", "images/22.png", "images/23.png", "images/24.png", "images/25.png", "images/26.png", "images/27.png", "images/28.png", "images/29.png", "images/30.png", "images/31.png", "images/32.png", "images/33.png", "images/34.png", "images/35.png", "images/36.png", "images/37.png", "images/38.png", "images/39.png", "images/40.png", "images/41.png", "images/42.png", "images/43.png", "images/44.png", "images/45.png", "images/46.png", "images/47.png", "images/48.png", "images/49.png", "images/50.png", "images/51.png", "images/52.png", "images/53.png", "images/54.png", "images/55.png", "images/56.png", "images/57.png", "images/58.png", "images/59.png", "images/60.png", "images/61.png", "images/62.png", "images/63.png", "images/64.png", "images/65.png", "images/66.png", "images/67.png", "images/68.png", "images/69.png", "images/70.png", "images/71.png", "images/72.png", "images/73.png", "images/74.png", "images/75.png", "images/76.png", "images/77.png", "images/78.png", "images/79.png", "images/80.png", "images/81.png", "images/82.png", "images/83.png", "images/84.png", "images/85.png", "images/86.png", "images/87.png", "images/88.png"];
+const CATALOG=[{"id": "c1", "club": "Barcelona", "name": "Home 2005-06", "year": 2005, "season": "2005-06", "img": 59, "num": 19, "type": "home", "titles": ["Liga", "Champions League", "Supercopa de España"], "goals": 10, "assists": 6, "special": "", "price": 200}, {"id": "c3", "club": "Barcelona", "name": "Away 2005-06", "year": 2005, "season": "2005-06", "img": 60, "num": 19, "type": "away", "titles": ["Liga", "Champions League", "Supercopa de España"], "goals": 10, "assists": 6, "special": "", "price": 160}, {"id": "c4", "club": "Barcelona", "name": "Home 2006-07", "year": 2006, "season": "2006-07", "img": 57, "num": 19, "type": "home", "titles": ["Supercopa de España"], "goals": 21, "assists": 5, "special": "", "price": 120}, {"id": "c5", "club": "Barcelona", "name": "Away 2006-07", "year": 2006, "season": "2006-07", "img": 58, "num": 19, "type": "away", "titles": ["Supercopa de España"], "goals": 21, "assists": 5, "special": "", "price": 100}, {"id": "c6", "club": "Barcelona", "name": "Home 2007-08", "year": 2007, "season": "2007-08", "img": 55, "num": 19, "type": "home", "titles": [], "goals": 19, "assists": 16, "special": "", "price": 150}, {"id": "c7", "club": "Barcelona", "name": "Away 2007-08", "year": 2007, "season": "2007-08", "img": 56, "num": 19, "type": "away", "titles": [], "goals": 19, "assists": 16, "special": "", "price": 120}, {"id": "c8", "club": "Barcelona", "name": "Home 2008-09", "year": 2008, "season": "2008-09", "img": 53, "num": 10, "type": "home", "titles": ["Liga", "Champions League", "Copa del Rey", "Supercopa España", "FIFA Club World Cup"], "goals": 41, "assists": 19, "special": "", "price": 350}, {"id": "c9", "club": "Barcelona", "name": "Away 2008-09", "year": 2008, "season": "2008-09", "img": 54, "num": 10, "type": "away", "titles": ["Liga", "Champions League", "Copa del Rey", "Supercopa España", "FIFA Club World Cup"], "goals": 41, "assists": 19, "special": "", "price": 280}, {"id": "c10", "club": "Barcelona", "name": "Home 2009-10", "year": 2009, "season": "2009-10", "img": 51, "num": 10, "type": "home", "titles": ["Liga", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 48, "assists": 12, "special": "", "price": 200}, {"id": "c11", "club": "Barcelona", "name": "Away 2009-10", "year": 2009, "season": "2009-10", "img": 52, "num": 10, "type": "away", "titles": ["Liga", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 48, "assists": 12, "special": "", "price": 160}, {"id": "c12", "club": "Barcelona", "name": "Home 2010-11", "year": 2010, "season": "2010-11", "img": 49, "num": 10, "type": "home", "titles": ["Liga", "Champions League", "Supercopa España", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 57, "assists": 29, "special": "", "price": 250}, {"id": "c13", "club": "Barcelona", "name": "Away 2010-11", "year": 2010, "season": "2010-11", "img": 50, "num": 10, "type": "away", "titles": ["Liga", "Champions League", "Supercopa España", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 57, "assists": 29, "special": "", "price": 180}, {"id": "c14", "club": "Barcelona", "name": "Home 2011-12", "year": 2011, "season": "2011-12", "img": 47, "num": 10, "type": "home", "titles": ["Liga", "Copa del Rey", "Supercopa España"], "goals": 82, "assists": 34, "special": "", "price": 220}, {"id": "c15", "club": "Barcelona", "name": "Away 2011-12", "year": 2011, "season": "2011-12", "img": 48, "num": 10, "type": "away", "titles": ["Liga", "Copa del Rey", "Supercopa España"], "goals": 82, "assists": 34, "special": "", "price": 160}, {"id": "c16", "club": "Barcelona", "name": "Home 2012-13", "year": 2012, "season": "2012-13", "img": 45, "num": 10, "type": "home", "titles": ["Liga"], "goals": 69, "assists": 18, "special": "", "price": 180}, {"id": "c17", "club": "Barcelona", "name": "Away 2012-13", "year": 2012, "season": "2012-13", "img": 46, "num": 10, "type": "away", "titles": ["Liga"], "goals": 69, "assists": 18, "special": "", "price": 140}, {"id": "c18", "club": "Barcelona", "name": "Home 2013-14", "year": 2013, "season": "2013-14", "img": 42, "num": 10, "type": "home", "titles": ["Copa del Rey", "Copa Catalunya"], "goals": 48, "assists": 16, "special": "", "price": 150}, {"id": "c19", "club": "Barcelona", "name": "Away 2013-14", "year": 2013, "season": "2013-14", "img": 43, "num": 10, "type": "away", "titles": ["Copa del Rey", "Copa Catalunya"], "goals": 48, "assists": 16, "special": "", "price": 120}, {"id": "c20", "club": "Barcelona", "name": "Third 2013-14", "year": 2013, "season": "2013-14", "img": 44, "num": 10, "type": "third", "titles": ["Copa del Rey", "Copa Catalunya"], "goals": 48, "assists": 16, "special": "", "price": 100}, {"id": "c21", "club": "Barcelona", "name": "Home 2014-15", "year": 2014, "season": "2014-15", "img": 39, "num": 10, "type": "home", "titles": ["Liga", "Champions League", "Copa del Rey", "Supercopa España", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 62, "assists": 31, "special": "", "price": 220}, {"id": "c22", "club": "Barcelona", "name": "Away 2014-15", "year": 2014, "season": "2014-15", "img": 40, "num": 10, "type": "away", "titles": ["Liga", "Champions League", "Copa del Rey", "Supercopa España", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 62, "assists": 31, "special": "", "price": 180}, {"id": "c23", "club": "Barcelona", "name": "Third 2014-15", "year": 2014, "season": "2014-15", "img": 41, "num": 10, "type": "third", "titles": ["Liga", "Champions League", "Copa del Rey", "Supercopa España", "UEFA Super Cup", "FIFA Club World Cup"], "goals": 62, "assists": 31, "special": "", "price": 130}, {"id": "c24", "club": "Barcelona", "name": "Home 2015-16", "year": 2015, "season": "2015-16", "img": 36, "num": 10, "type": "home", "titles": ["Liga", "Copa del Rey", "UEFA Super Cup", "Supercopa España"], "goals": 50, "assists": 27, "special": "", "price": 150}, {"id": "c25", "club": "Barcelona", "name": "Away 2015-16", "year": 2015, "season": "2015-16", "img": 37, "num": 10, "type": "away", "titles": ["Liga", "Copa del Rey", "UEFA Super Cup", "Supercopa España"], "goals": 50, "assists": 27, "special": "", "price": 120}, {"id": "c26", "club": "Barcelona", "name": "Third 2015-16", "year": 2015, "season": "2015-16", "img": 38, "num": 10, "type": "third", "titles": ["Liga", "Copa del Rey", "UEFA Super Cup", "Supercopa España"], "goals": 50, "assists": 27, "special": "", "price": 100}, {"id": "c27", "club": "Barcelona", "name": "Home 2016-17", "year": 2016, "season": "2016-17", "img": 33, "num": 10, "type": "home", "titles": ["Copa del Rey", "Supercopa España"], "goals": 57, "assists": 18, "special": "", "price": 130}, {"id": "c28", "club": "Barcelona", "name": "Away 2016-17", "year": 2016, "season": "2016-17", "img": 34, "num": 10, "type": "away", "titles": ["Copa del Rey", "Supercopa España"], "goals": 57, "assists": 18, "special": "", "price": 100}, {"id": "c29", "club": "Barcelona", "name": "Third 2016-17", "year": 2016, "season": "2016-17", "img": 35, "num": 10, "type": "third", "titles": ["Copa del Rey", "Supercopa España"], "goals": 57, "assists": 18, "special": "", "price": 90}, {"id": "c30", "club": "Barcelona", "name": "Home 2017-18", "year": 2017, "season": "2017-18", "img": 30, "num": 10, "type": "home", "titles": ["Liga", "Copa del Rey"], "goals": 52, "assists": 21, "special": "", "price": 120}, {"id": "c31", "club": "Barcelona", "name": "Away 2017-18", "year": 2017, "season": "2017-18", "img": 31, "num": 10, "type": "away", "titles": ["Liga", "Copa del Rey"], "goals": 52, "assists": 21, "special": "", "price": 100}, {"id": "c32", "club": "Barcelona", "name": "Third 2017-18", "year": 2017, "season": "2017-18", "img": 32, "num": 10, "type": "third", "titles": ["Liga", "Copa del Rey"], "goals": 52, "assists": 21, "special": "", "price": 90}, {"id": "c33", "club": "Barcelona", "name": "Home 2018-19", "year": 2018, "season": "2018-19", "img": 27, "num": 10, "type": "home", "titles": ["Liga", "Supercopa de Catalunya"], "goals": 54, "assists": 20, "special": "", "price": 130}, {"id": "c34", "club": "Barcelona", "name": "Away 2018-19", "year": 2018, "season": "2018-19", "img": 28, "num": 10, "type": "away", "titles": ["Liga", "Supercopa de Catalunya"], "goals": 54, "assists": 20, "special": "", "price": 100}, {"id": "c35", "club": "Barcelona", "name": "Third 2018-19", "year": 2018, "season": "2018-19", "img": 29, "num": 10, "type": "third", "titles": ["Liga", "Supercopa de Catalunya"], "goals": 54, "assists": 20, "special": "", "price": 90}, {"id": "c36", "club": "Barcelona", "name": "Home 2019-20", "year": 2019, "season": "2019-20", "img": 23, "num": 10, "type": "home", "titles": [], "goals": 33, "assists": 26, "special": "", "price": 110}, {"id": "c37", "club": "Barcelona", "name": "Away 2019-20", "year": 2019, "season": "2019-20", "img": 24, "num": 10, "type": "away", "titles": [], "goals": 33, "assists": 26, "special": "", "price": 90}, {"id": "c38", "club": "Barcelona", "name": "Third 2019-20", "year": 2019, "season": "2019-20", "img": 25, "num": 10, "type": "third", "titles": [], "goals": 33, "assists": 26, "special": "", "price": 80}, {"id": "c39", "club": "Barcelona", "name": "Third 2019-20 Senyera", "year": 2019, "season": "2019-20", "img": 22, "num": 10, "type": "third", "titles": [], "goals": 33, "assists": 26, "special": "", "price": 90}, {"id": "c40", "club": "Barcelona", "name": "Home 2020-21", "year": 2020, "season": "2020-21", "img": 19, "num": 10, "type": "home", "titles": ["Copa del Rey"], "goals": 44, "assists": 17, "special": "", "price": 150}, {"id": "c41", "club": "Barcelona", "name": "Away 2020-21", "year": 2020, "season": "2020-21", "img": 20, "num": 10, "type": "away", "titles": ["Copa del Rey"], "goals": 44, "assists": 17, "special": "", "price": 120}, {"id": "c42", "club": "Barcelona", "name": "Third 2020-21", "year": 2020, "season": "2020-21", "img": 21, "num": 10, "type": "third", "titles": ["Copa del Rey"], "goals": 44, "assists": 17, "special": "", "price": 100}, {"id": "c43", "club": "PSG", "name": "Fourth 2021-22", "year": 2021, "season": "2021-22", "img": 14, "num": 30, "type": "fourth", "titles": ["Ligue 1"], "goals": 21, "assists": 16, "special": "", "price": 60}, {"id": "c44", "club": "PSG", "name": "Home 2021-22", "year": 2021, "season": "2021-22", "img": 15, "num": 30, "type": "home", "titles": ["Ligue 1"], "goals": 21, "assists": 16, "special": "", "price": 90}, {"id": "c45", "club": "PSG", "name": "Away 2021-22", "year": 2021, "season": "2021-22", "img": 16, "num": 30, "type": "away", "titles": ["Ligue 1"], "goals": 21, "assists": 16, "special": "", "price": 70}, {"id": "c46", "club": "PSG", "name": "Third 2021-22", "year": 2021, "season": "2021-22", "img": 17, "num": 30, "type": "third", "titles": ["Ligue 1"], "goals": 21, "assists": 16, "special": "", "price": 65}, {"id": "c47", "club": "PSG", "name": "Home 2022-23", "year": 2022, "season": "2022-23", "img": 11, "num": 30, "type": "home", "titles": ["Ligue 1", "Trophée des Champions"], "goals": 38, "assists": 25, "special": "", "price": 80}, {"id": "c48", "club": "PSG", "name": "Away 2022-23", "year": 2022, "season": "2022-23", "img": 12, "num": 30, "type": "away", "titles": ["Ligue 1", "Trophée des Champions"], "goals": 38, "assists": 25, "special": "", "price": 65}, {"id": "c49", "club": "PSG", "name": "Third 2022-23", "year": 2022, "season": "2022-23", "img": 13, "num": 30, "type": "third", "titles": ["Ligue 1", "Trophée des Champions"], "goals": 38, "assists": 25, "special": "", "price": 60}, {"id": "c50", "club": "PSG", "name": "Fourth 2022-23", "year": 2022, "season": "2022-23", "img": 18, "num": 30, "type": "third", "titles": ["Ligue 1", "Trophée des Champions"], "goals": 38, "assists": 25, "special": "", "price": 70}, {"id": "c51", "club": "Inter Miami", "name": "Home 2023", "year": 2023, "season": "2023", "img": 9, "num": 10, "type": "home", "titles": ["Leagues Cup"], "goals": 30, "assists": 18, "special": "", "price": 120}, {"id": "c52", "club": "Inter Miami", "name": "Away 2023", "year": 2023, "season": "2023", "img": 10, "num": 10, "type": "away", "titles": ["Leagues Cup"], "goals": 30, "assists": 18, "special": "", "price": 90}, {"id": "c53", "club": "Inter Miami", "name": "Home 2024", "year": 2024, "season": "2024", "img": 6, "num": 10, "type": "home", "titles": [], "goals": 30, "assists": 18, "special": "", "price": 100}, {"id": "c54", "club": "Inter Miami", "name": "Away 2024", "year": 2024, "season": "2024", "img": 7, "num": 10, "type": "away", "titles": [], "goals": 30, "assists": 18, "special": "", "price": 80}, {"id": "c55", "club": "Inter Miami", "name": "Third 2024", "year": 2024, "season": "2024", "img": 8, "num": 10, "type": "third", "titles": [], "goals": 30, "assists": 18, "special": "", "price": 75}, {"id": "c56", "club": "Inter Miami", "name": "Home 2025", "year": 2025, "season": "2024-25", "img": 3, "num": 10, "type": "home", "titles": ["MLS Cup 2025"], "goals": 29, "assists": 10, "special": "", "price": 90}, {"id": "c57", "club": "Inter Miami", "name": "Away 2025", "year": 2025, "season": "2024-25", "img": 4, "num": 10, "type": "away", "titles": ["MLS Cup 2025"], "goals": 29, "assists": 10, "special": "", "price": 75}, {"id": "c58", "club": "Inter Miami", "name": "Away 2025 Solapa", "year": 2025, "season": "2024-25", "img": 2, "num": 10, "type": "away", "titles": ["MLS Cup 2025"], "goals": 29, "assists": 10, "special": "", "price": 70}, {"id": "c59", "club": "Inter Miami", "name": "Third 2025", "year": 2025, "season": "2024-25", "img": 5, "num": 10, "type": "third", "titles": ["MLS Cup 2025"], "goals": 29, "assists": 10, "special": "", "price": 70}, {"id": "c61", "club": "Argentina", "name": "Home 2006", "year": 2006, "season": "2005-06", "img": 62, "num": 19, "type": "home", "titles": [], "goals": 1, "assists": 1, "special": "", "price": 180}, {"id": "c62", "club": "Argentina", "name": "Away 2006", "year": 2006, "season": "2005-06", "img": 63, "num": 19, "type": "away", "titles": [], "goals": 1, "assists": 1, "special": "", "price": 150}, {"id": "c63", "club": "Argentina", "name": "Home 2007-08", "year": 2007, "season": "2007-08", "img": 64, "num": 10, "type": "home", "titles": [], "goals": 7, "assists": 5, "special": "", "price": 130}, {"id": "c64", "club": "Argentina", "name": "Away 2007-08", "year": 2007, "season": "2007-08", "img": 65, "num": 10, "type": "away", "titles": [], "goals": 7, "assists": 5, "special": "", "price": 110}, {"id": "c65", "club": "Argentina", "name": "Away 2010", "year": 2010, "season": "2009-10", "img": 66, "num": 10, "type": "away", "titles": [], "goals": 0, "assists": 2, "special": "", "price": 130}, {"id": "c66", "club": "Argentina", "name": "Home 2010", "year": 2010, "season": "2009-10", "img": 67, "num": 10, "type": "home", "titles": [], "goals": 0, "assists": 2, "special": "", "price": 150}, {"id": "c67", "club": "Argentina", "name": "Home 2011", "year": 2011, "season": "2010-11", "img": 68, "num": 10, "type": "home", "titles": [], "goals": 4, "assists": 3, "special": "", "price": 120}, {"id": "c68", "club": "Argentina", "name": "Away 2011", "year": 2011, "season": "2010-11", "img": 69, "num": 10, "type": "away", "titles": [], "goals": 4, "assists": 3, "special": "", "price": 100}, {"id": "c69", "club": "Argentina", "name": "Home 2014", "year": 2014, "season": "2013-14", "img": 70, "num": 10, "type": "home", "titles": [], "goals": 4, "assists": 1, "special": "", "price": 200}, {"id": "c70", "club": "Argentina", "name": "Away 2014", "year": 2014, "season": "2013-14", "img": 71, "num": 10, "type": "away", "titles": [], "goals": 4, "assists": 1, "special": "", "price": 160}, {"id": "c71", "club": "Argentina", "name": "Home 2015", "year": 2015, "season": "2014-15", "img": 72, "num": 10, "type": "home", "titles": [], "goals": 7, "assists": 4, "special": "", "price": 110}, {"id": "c72", "club": "Argentina", "name": "Away 2015", "year": 2015, "season": "2014-15", "img": 73, "num": 10, "type": "away", "titles": [], "goals": 7, "assists": 4, "special": "", "price": 90}, {"id": "c73", "club": "Argentina", "name": "Home 2016", "year": 2016, "season": "2015-16", "img": 74, "num": 10, "type": "home", "titles": [], "goals": 5, "assists": 4, "special": "", "price": 100}, {"id": "c74", "club": "Argentina", "name": "Home 2018", "year": 2018, "season": "2017-18", "img": 75, "num": 10, "type": "home", "titles": [], "goals": 1, "assists": 1, "special": "", "price": 120}, {"id": "c75", "club": "Argentina", "name": "Away 2018", "year": 2018, "season": "2017-18", "img": 76, "num": 10, "type": "away", "titles": [], "goals": 1, "assists": 1, "special": "", "price": 100}, {"id": "c76", "club": "Argentina", "name": "Home 2019", "year": 2019, "season": "2018-19", "img": 77, "num": 10, "type": "home", "titles": [], "goals": 2, "assists": 5, "special": "", "price": 90}, {"id": "c77", "club": "Argentina", "name": "Home 2021", "year": 2021, "season": "2020-21", "img": 78, "num": 10, "type": "home", "titles": ["Copa América"], "goals": 4, "assists": 5, "special": "", "price": 150}, {"id": "c78", "club": "Argentina", "name": "Away 2021", "year": 2021, "season": "2020-21", "img": 79, "num": 10, "type": "away", "titles": ["Copa América"], "goals": 4, "assists": 5, "special": "", "price": 120}, {"id": "c79", "club": "Argentina", "name": "Home Qatar 2022", "year": 2022, "season": "2021-22", "img": 80, "num": 10, "type": "home", "titles": ["Copa del Mundo", "Finalísima"], "goals": 12, "assists": 3, "special": "", "price": 280}, {"id": "c80", "club": "Argentina", "name": "Away Qatar 2022", "year": 2022, "season": "2021-22", "img": 81, "num": 10, "type": "away", "titles": ["Copa del Mundo", "Finalísima"], "goals": 12, "assists": 3, "special": "", "price": 220}, {"id": "c81", "club": "Argentina", "name": "Home 2022 Badge", "year": 2022, "season": "2022-23", "img": 82, "num": 10, "type": "home", "titles": [], "goals": 8, "assists": 4, "special": "", "price": 160}, {"id": "c82", "club": "Argentina", "name": "Away 2022 Badge", "year": 2022, "season": "2022-23", "img": 83, "num": 10, "type": "away", "titles": [], "goals": 8, "assists": 4, "special": "", "price": 130}, {"id": "c83", "club": "Argentina", "name": "Home 2023-24", "year": 2023, "season": "2023-24", "img": 84, "num": 10, "type": "home", "titles": ["Copa América 2024"], "goals": 5, "assists": 9, "special": "", "price": 120}, {"id": "c84", "club": "Argentina", "name": "Away 2023-24", "year": 2023, "season": "2023-24", "img": 85, "num": 10, "type": "away", "titles": ["Copa América 2024"], "goals": 5, "assists": 9, "special": "", "price": 100}, {"id": "c_retro", "club": "Argentina", "name": "Retro Originals", "year": 2024, "season": "2023-24", "img": 86, "num": 10, "type": "home", "titles": ["Copa América 2024"], "goals": 5, "assists": 9, "special": "", "price": 130}, {"id": "c85", "club": "Argentina", "name": "Home 2026", "year": 2026, "season": "2025-26", "img": 87, "num": 10, "type": "home", "titles": [], "goals": 0, "assists": 0, "special": "", "price": 90}, {"id": "c86", "club": "Argentina", "name": "Away 2026", "year": 2026, "season": "2025-26", "img": 88, "num": 10, "type": "away", "titles": [], "goals": 0, "assists": 0, "special": "", "price": 90}];
+document.getElementById('logoImg').src='images/logo.png';
+const KEY="messi_v10";
+let col=JSON.parse(localStorage.getItem(KEY)||"[]");
+let mainTab="col",sortAsc=false,catFilter="all",searchQuery="";
+// shared drawer filters (used by col, missing, cat)
+let fClub="all",fType="all",pClub="all",pType="all";
+let catSort=false;
+// which tab opened the drawer
+let drawerCaller="col";
+function save(){localStorage.setItem(KEY,JSON.stringify(col))}
+const TOTAL=CATALOG.length;
+const CAT_LABELS={"orig":"Original s/núm","orig-num":"Original c/núm","china":"China AAA","trucha":"Trucha s/núm"};
+const CAT_CLS={"orig":"bc-orig","orig-num":"bc-orig-num","china":"bc-china","trucha":"bc-trucha"};
+// Club order: club first, then selección
+const CLUB_ORDER=["Barcelona","PSG","Inter Miami","Argentina"];
+// Type order within each club inside a season
+const TYPE_ORDER={"home":0,"away":1,"third":2,"fourth":3};
+function stars(n){return Array.from({length:5},(_,i)=>i<n?"⭐":"☆").join("");}
+
+// Sort by season string, then within same season: club order + type order
+function sortItems(arr,asc){
+  return [...arr].sort((a,b)=>{
+    const sA=a.season||a._s||String(a.year);
+    const sB=b.season||b._s||String(b.year);
+    const sCmp=asc?sA.localeCompare(sB):sB.localeCompare(sA);
+    if(sCmp!==0) return sCmp;
+    // same season: club order
+    const cA=CLUB_ORDER.indexOf(a.club), cB=CLUB_ORDER.indexOf(b.club);
+    const clubDiff=(cA===-1?99:cA)-(cB===-1?99:cB);
+    if(clubDiff!==0) return clubDiff;
+    // same club: type order
+    const tA=TYPE_ORDER[a.type]??9, tB=TYPE_ORDER[b.type]??9;
+    return tA-tB;
+  });
+}
+
+function groupBy(arr){
+  const m={};
+  arr.forEach(x=>{const s=x.season||String(x.year);if(!m[s])m[s]=[];m[s].push(x);});
+  return m;
+}
+function sKeys(m,asc){return Object.keys(m).sort((a,b)=>asc?a.localeCompare(b):b.localeCompare(a));}
+
+function renderChips(){
+  // no-op, chips now rendered inline in each tab
+}
+function chipsHTML(){
+  const cats=[["all","🏆 Todas"],["orig","🔵 Orig s/núm"],["orig-num","🟡 Orig c/núm"],["china","🔴 Chinas"],["trucha","⚫ Trucha"]];
+  return`<div class="chips-row" style="padding:0 10px 8px">${cats.map(([k,l])=>{
+    const cnt=k==="all"?`${col.length}/${TOTAL}`:col.filter(j=>j.cat===k).length;
+    return`<div class="chip${catFilter===k?" on":""}" onclick="setCF('${k}')">${l} ${cnt}</div>`;
+  }).join("")}</div>`;
+}
+function setCF(k){catFilter=k;render();}
+function switchTab(el){document.querySelectorAll(".mtab").forEach(t=>t.classList.remove("on"));el.classList.add("on");mainTab=el.dataset.tab;render();}
+function navTo(t){
+  mainTab=t;
+  document.querySelectorAll(".mtab").forEach(e=>e.classList.toggle("on",e.dataset.tab===t));
+  document.querySelectorAll(".nav-i").forEach(e=>e.classList.remove("on"));
+  document.getElementById("ni-"+t)?.classList.add("on");
+  render();
+}
+function toggleFav(id,e){e.stopPropagation();const j=col.find(x=>x.id===id);if(j){j.fav=!j.fav;save();render();}}
+function toggleSort(isCat){if(isCat)catSort=!catSort;else sortAsc=!sortAsc;render();}
+function enrich(j){
+  const c=j.catalogId?CATALOG.find(x=>x.id===j.catalogId):null;
+  return{...j,_s:c?c.season:(j.season||String(j.year)),_n:c?c.num:(j.num||10),
+    club:c?c.club:j.club, type:c?c.type:(j.type||"home"), year:c?c.year:j.year};
+}
+function render(){
+  renderChips();
+  const inner=document.getElementById("inner");
+  if(mainTab==="col")renderCol(inner);
+  else if(mainTab==="missing")renderMissing(inner);
+  else if(mainTab==="cat")renderCatalog(inner);
+  else if(mainTab==="favs")renderFavs(inner);
+  else if(mainTab==="progress")renderProgress(inner);
+}
+function toggleSearch(){
+  const exp=document.getElementById("searchExpand");
+  const btn=document.getElementById("searchToggle");
+  const open=exp.style.display==="none";
+  exp.style.display=open?"flex":"none";
+  btn.classList.toggle("active",open);
+  if(open)document.getElementById("searchInput").focus();
+  else{searchQuery="";document.getElementById("searchInput").value="";render();}
+}
+function onSearch(v){
+  searchQuery=v.trim().toLowerCase();
+  render();
+}
+function clearSearch(){
+  searchQuery="";
+  document.getElementById("searchInput").value="";
+  document.getElementById("searchExpand").style.display="none";
+  document.getElementById("searchToggle").classList.remove("active");
+  render();
+}
+function applySearch(items){
+  if(!searchQuery)return items;
+  return items.filter(j=>{
+    const name=(j.name||"").toLowerCase();
+    const club=(j.club||"").toLowerCase();
+    const year=String(j.year||"");
+    return name.includes(searchQuery)||club.includes(searchQuery)||year.includes(searchQuery);
+  });
+}
+
+// ── CARD TEMPLATES ──
+function collCard(j,i){
+  const catCls=CAT_CLS[j.cat]||"bc-orig",catLbl=CAT_LABELS[j.cat]||"Original";
+  const imgSrc=(j.img!=null&&j.img>=0)?IMGS[j.img]:"";
+  return`<div class="card" style="animation-delay:${i*0.03}s" onclick="openDetail('${j.id}')">
+    <div class="card-img">
+      ${imgSrc?`<img src="${imgSrc}" loading="lazy" alt="">`:`<span style="font-size:42px">👕</span>`}
+      <div class="badge-cat ${catCls}">${catLbl}</div>
+      <div class="fav-star" onclick="toggleFav('${j.id}',event)">${j.fav?"⭐":"☆"}</div>
+    </div>
+    <div class="card-info">
+      <div class="card-club">${j.club}</div>
+      <div class="card-name">${j.name}</div>
+      <div class="card-year">${j.year}</div>
+    </div>
+    <div class="card-foot"><div class="card-num">${j._n||10}</div><div class="stars">${stars(j.cond||3)}</div></div>
+  </div>`;
+}
+
+function catCard(c,isOwned){
+  return`<div class="cat-card" onclick="openCatDet('${c.id}')">
+    <div class="cat-img"><img src="${IMGS[c.img]}" loading="lazy" alt=""></div>
+    ${isOwned?`<div class="owned-chip">✓ Tenés</div>`:""}
+    <div class="cat-info"><div class="cat-yr">${c.club} · ${c.year}</div><div class="cat-name">${c.name}</div></div>
+    ${!isOwned?`<button class="add-cat-btn" onclick="event.stopPropagation();openCatDet('${c.id}')">+ Tengo esta</button>`:""}
+  </div>`;
+}
+
+// Build season HTML from enriched items (already sorted)
+function makeSeasonHTML(items,asc){
+  const g=groupBy(items.map(x=>({...x,season:x._s||x.season||String(x.year)})));
+  return sKeys(g,asc).map(s=>{
+    // items within season already sorted by club+type from sortItems()
+    const its=g[s];
+    const clubs=[...new Set(its.map(x=>x.club))].join(" · ");
+    return`<div class="season-hdr">Temporada ${s} <small>${clubs}</small></div>
+      <div class="grid-wrap"><div class="grid">${its.map((j,idx)=>collCard(j,idx)).join("")}</div></div>`;
+  }).join("");
+}
+
+function makeCatSeasonHTML(items,asc,owned){
+  const g=groupBy(items.map(x=>({...x,season:x.season||String(x.year)})));
+  return sKeys(g,asc).map(s=>{
+    const its=g[s];
+    const clubs=[...new Set(its.map(x=>x.club))].join(" · ");
+    return`<div class="season-hdr">Temporada ${s} <small>${clubs}</small></div>
+      <div class="grid-wrap"><div class="grid">${its.map(c=>catCard(c,owned.has(c.id))).join("")}</div></div>`;
+  }).join("");
+}
+
+// ── FILTER TOOLBAR (shared) ──
+function filterToolbarHTML(caller,count,total,sortFn){
+  const fo=fClub!=="all"||fType!=="all";
+  const label=caller==="missing"?`🔍 Faltan ${count}/${total}`:caller==="cat"?`${count} camisetas`:"";
+  const sortLbl=caller==="cat"?(catSort?"↑ Más vieja":"↓ Más nueva"):(sortAsc?"↑ Más vieja":"↓ Más nueva");
+  const sortCall=caller==="cat"?"toggleSort(true)":"toggleSort(false)";
+  return`<div class="toolbar">
+    ${caller==="col"||caller==="favs"
+      ?`<button class="filter-btn${fo?" active":""}" onclick="openDrawer('${caller}')">⚙️ Filtrar${fo?" •":""}</button>`
+      :`<div style="display:flex;gap:6px;align-items:center">
+          <button class="filter-btn${fo?" active":""}" onclick="openDrawer('${caller}')">⚙️ Filtrar${fo?" •":""}</button>
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--sub);letter-spacing:1px">${label}</span>
+        </div>`}
+    ${caller==="col"||caller==="favs"?`<span></span>`:""}
+    <button class="sort-btn" onclick="${sortCall}">${sortLbl}</button>
+  </div>`;
+}
+
+// ── RENDER FUNCTIONS ──
+function renderCol(inner){
+  const fo=fClub!=="all"||fType!=="all";
+  let items=col.map(enrich);
+  if(catFilter!=="all")items=items.filter(j=>j.cat===catFilter);
+  if(fClub!=="all")items=items.filter(j=>j.club===fClub);
+  if(fType!=="all")items=items.filter(j=>j.type===fType);
+  items=applySearch(items);
+  items=sortItems(items,sortAsc);
+  const sortLbl=sortAsc?"↑ Más vieja":"↓ Más nueva";
+  inner.innerHTML=`<div class="toolbar">
+    <button class="filter-btn${fo?" active":""}" onclick="openDrawer('col')">⚙️ Filtrar${fo?" •":""}</button>
+    <button class="sort-btn" onclick="toggleSort(false)">${sortLbl}</button>
+  </div>${chipsHTML()}${items.length?makeSeasonHTML(items,sortAsc):`<div class="empty"><div style="font-size:44px;margin-bottom:10px">👕</div>Sin camisetas.</div>`}<div class="pb-safe"></div>`;
+}
+
+function renderFavs(inner){
+  const fo=fClub!=="all"||fType!=="all";
+  let items=col.filter(j=>j.fav).map(enrich);
+  if(fClub!=="all")items=items.filter(j=>j.club===fClub);
+  if(fType!=="all")items=items.filter(j=>j.type===fType);
+  items=sortItems(items,sortAsc);
+  const sortLbl=sortAsc?"↑ Más vieja":"↓ Más nueva";
+  inner.innerHTML=`<div class="toolbar">
+    <button class="filter-btn${fo?" active":""}" onclick="openDrawer('favs')">⚙️ Filtrar${fo?" •":""}</button>
+    <button class="sort-btn" onclick="toggleSort(false)">${sortLbl}</button>
+  </div>${chipsHTML()}${items.length?makeSeasonHTML(items,sortAsc):`<div class="empty">No tenés favoritos aún.<br>Tocá ☆ en cualquier camiseta.</div>`}<div class="pb-safe"></div>`;
+}
+
+function renderMissing(inner){
+  const fo=fClub!=="all"||fType!=="all";
+  const owned=new Set(col.map(j=>j.catalogId).filter(Boolean));
+  let missing=CATALOG.filter(c=>!owned.has(c.id));
+  if(fClub!=="all")missing=missing.filter(c=>c.club===fClub);
+  if(fType!=="all")missing=missing.filter(c=>c.type===fType);
+  missing=applySearch(missing);
+  missing=sortItems(missing,sortAsc);
+  const sortLbl=sortAsc?"↑ Más vieja":"↓ Más nueva";
+  inner.innerHTML=`<div class="toolbar">
+    <button class="filter-btn${fo?" active":""}" onclick="openDrawer('missing')">⚙️ Filtrar${fo?" •":""}</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--sub)">Faltan ${missing.length}/${TOTAL}</div>
+    <button class="sort-btn" onclick="toggleSort(false)">${sortLbl}</button>
+  </div>
+  ${missing.length?makeCatSeasonHTML(missing,sortAsc,owned):`<div class="empty"><div style="font-size:44px;margin-bottom:10px">🏆</div>¡Tenés todas!</div>`}
+  <div class="pb-safe"></div>`;
+}
+
+function renderCatalog(inner){
+  const fo=fClub!=="all"||fType!=="all";
+  const owned=new Set(col.map(j=>j.catalogId).filter(Boolean));
+  let filtered=CATALOG;
+  if(fClub!=="all")filtered=filtered.filter(c=>c.club===fClub);
+  if(fType!=="all")filtered=filtered.filter(c=>c.type===fType);
+  filtered=applySearch(filtered);
+  filtered=sortItems(filtered,catSort);
+  const sortLbl=catSort?"↑ Más vieja":"↓ Más nueva";
+  inner.innerHTML=`<div class="toolbar">
+    <button class="filter-btn${fo?" active":""}" onclick="openDrawer('cat')">⚙️ Filtrar${fo?" •":""}</button>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--sub)">${filtered.length} camisetas</div>
+    <button class="sort-btn" onclick="toggleSort(true)">${sortLbl}</button>
+  </div>
+  ${makeCatSeasonHTML(filtered,catSort,owned)}
+  <div class="pb-safe"></div>`;
+}
+
+// ── SINGLE SHARED DRAWER ──
+function openDrawer(caller){
+  drawerCaller=caller;
+  pClub=fClub;pType=fType;
+  document.getElementById("dClubs").innerHTML=["all","Barcelona","Argentina","PSG","Inter Miami"].map(c=>
+    `<button class="dopt${pClub===c?" on":""}" onclick="setPClub('${c}')">${c==="all"?"Todos":c}</button>`).join("");
+  document.getElementById("dTypes").innerHTML=[["all","Todas"],["home","Titular"],["away","Suplente"],["third","Tercera"]].map(([v,l])=>
+    `<button class="dopt${pType===v?" on":""}" onclick="setPType('${v}')">${l}</button>`).join("");
+  document.getElementById("drawerWrap").classList.add("open");
+}
+function closeDrawer(){document.getElementById("drawerWrap").classList.remove("open");}
+function setPClub(v){pClub=v;document.querySelectorAll("#dClubs .dopt").forEach(b=>b.classList.toggle("on",b.textContent===(v==="all"?"Todos":v)));}
+function setPType(v){pType=v;const m={"all":"Todas","home":"Titular","away":"Suplente","third":"Tercera"};document.querySelectorAll("#dTypes .dopt").forEach(b=>b.classList.toggle("on",b.textContent===m[v]));}
+function applyDrawer(){fClub=pClub;fType=pType;closeDrawer();render();}
+
+function renderProgress(inner){
+  const owned=new Set(col.map(j=>j.catalogId).filter(Boolean));
+  const clubs=["Barcelona","PSG","Inter Miami","Argentina"];
+  const clubColors={"Barcelona":"#c8102e","PSG":"#002f5e","Inter Miami":"#f0a8c0","Argentina":"#74b3e8"};
+  const clubTotal={"Barcelona":0,"PSG":0,"Inter Miami":0,"Argentina":0};
+  const clubOwned={"Barcelona":0,"PSG":0,"Inter Miami":0,"Argentina":0};
+  CATALOG.forEach(c=>{
+    if(clubTotal[c.club]!==undefined){
+      clubTotal[c.club]++;
+      if(owned.has(c.id))clubOwned[c.club]++;
+    }
+  });
+  const totalCat=CATALOG.length;
+  const totalOwned=col.length;
+  const pct=Math.round(totalOwned/totalCat*100);
+  // SVG donut
+  const r=28,circ=2*Math.PI*r;
+  const filled=circ*(pct/100);
+  const donutSVG=`<svg width="70" height="70" viewBox="0 0 70 70">
+    <circle cx="35" cy="35" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/>
+    <circle cx="35" cy="35" r="${r}" fill="none" stroke="#f2c94c" stroke-width="8"
+      stroke-dasharray="${filled} ${circ}" stroke-dashoffset="${circ/4}"
+      stroke-linecap="round" transform="rotate(-90 35 35)"/>
+  </svg>`;
+
+  const barsHTML=clubs.map(club=>{
+    const tot=clubTotal[club]||0;
+    const own=clubOwned[club]||0;
+    const p=tot?Math.round(own/tot*100):0;
+    const col_=clubColors[club]||"var(--blue)";
+    return`<div class="prog-row">
+      <div class="prog-row-top">
+        <span class="prog-club">${club}</span>
+        <span class="prog-count">${own}/${tot} · ${p}%</span>
+      </div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${p}%;background:${col_}"></div></div>
+    </div>`;
+  }).join("");
+
+  // Cat breakdown
+  const catBreak=["orig","orig-num","china","trucha"].map(k=>{
+    const cnt=col.filter(j=>j.cat===k).length;
+    const lbl=CAT_LABELS[k];
+    const p=totalOwned?Math.round(cnt/totalOwned*100):0;
+    const clr={"orig":"#1a56db","orig-num":"#b87a00","china":"#b01a1a","trucha":"#3a3a50"}[k];
+    return`<div class="prog-row">
+      <div class="prog-row-top"><span class="prog-club">${lbl}</span><span class="prog-count">${cnt} · ${p}%</span></div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${p}%;background:${clr}"></div></div>
+    </div>`;
+  }).join("");
+
+  inner.innerHTML=`<div class="progress-wrap">
+    <div class="progress-title">📊 Progreso Total</div>
+    ${barsHTML}
+    <div class="prog-total-row">
+      <div class="prog-donut-wrap">
+        ${donutSVG}
+        <div class="prog-donut-label">
+          <div class="prog-donut-pct">${pct}%</div>
+          <div class="prog-donut-sub">TOTAL</div>
+        </div>
+      </div>
+      <div class="prog-total-text">
+        <div class="prog-total-num">${totalOwned}<span style="font-size:14px;color:var(--sub)">/${totalCat}</span></div>
+        <div class="prog-total-lbl">camisetas en tu colección</div>
+      </div>
+    </div>
+  </div>
+  <div class="progress-wrap" style="margin-top:10px">
+    <div class="progress-title">👕 Por Categoría</div>
+    ${catBreak}
+  </div>
+  <div class="pb-safe"></div>`;
+}
+
+function openCatDet(cid){
+  const c=CATALOG.find(x=>x.id===cid);if(!c)return;
+  const isOwned=col.some(j=>j.catalogId===cid);
+  const titlesHTML=c.titles&&c.titles.length?c.titles.map(t=>`<span class="title-chip">🏆 ${t}</span>`).join(""):`<span class="no-titles">Sin títulos esta temporada</span>`;
+  document.getElementById("detSheet").innerHTML=`
+    <div class="handle"></div>
+    <div class="det-hero"><img src="${IMGS[c.img]}" alt=""></div>
+    <div class="det-meta">
+      <div class="det-club">${c.club} · ${c.year}</div>
+      <div class="det-name">${c.name}</div>
+      <div class="det-tags">
+        <span class="tag">#${c.num||10}</span>
+        <span class="tag">${c.type==="home"?"Titular":c.type==="away"?"Suplente":"Tercera"}</span>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val">${c.goals||0}</div><div class="stat-lbl">⚽ Goles temporada</div></div>
+      <div class="stat-box"><div class="stat-val">${c.assists||0}</div><div class="stat-lbl">🎯 Asistencias</div></div>
+    </div>
+    <div class="titles-sec">
+      <div class="titles-lbl">🏆 TÍTULOS ESTA TEMPORADA</div>
+      <div class="titles-list">${titlesHTML}</div>
+    </div>
+    ${!isOwned?`<div style="padding:0 14px 8px">
+      <label class="in-lbl">CATEGORÍA DE LA TUYA</label>
+      <select id="cc" class="in-sel"><option value="orig">🔵 Original sin número</option><option value="orig-num">🟡 Original con número</option><option value="china">🔴 China / Tailandesa AAA</option><option value="trucha">⚫ Trucha sin número</option></select>
+      <label class="in-lbl">CONDICIÓN</label>
+      <select id="cd" class="in-sel"><option value="5">⭐⭐⭐⭐⭐ Perfecta</option><option value="4">⭐⭐⭐⭐ Muy buena</option><option value="3">⭐⭐⭐ Buena</option><option value="2">⭐⭐ Regular</option><option value="1">⭐ Usada</option></select>
+    </div>`:""}
+    <div class="det-acts">
+      <button class="btn-cls" onclick="document.getElementById('detOv').classList.remove('open')">Cerrar</button>
+      ${!isOwned?`<button class="btn-add" onclick="addFromCat('${c.id}')">✓ La tengo!</button>`:`<button class="btn-cls" style="background:rgba(212,160,23,.15);color:var(--gold2)" disabled>✓ Ya la tenés</button>`}
+    </div>`;
+  document.getElementById("detOv").classList.add("open");
+}
+function addFromCat(cid){
+  const c=CATALOG.find(x=>x.id===cid);if(!c)return;
+  col.unshift({id:Date.now().toString(),catalogId:cid,name:c.name,club:c.club,year:c.year,img:c.img,num:c.num||10,type:c.type,season:c.season,cat:document.getElementById("cc").value,cond:parseInt(document.getElementById("cd").value),fav:false});
+  save();
+  // Close sheet, stay in catalog, restore scroll
+  const scrollEl=document.getElementById("scroll");
+  const savedScroll=scrollEl.scrollTop;
+  document.getElementById("detOv").classList.remove("open");
+  // Stay on catalog tab
+  mainTab="cat";
+  document.querySelectorAll(".mtab").forEach(t=>t.classList.toggle("on",t.dataset.tab==="cat"));
+  render();
+  // Restore scroll position after DOM update
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ scrollEl.scrollTop=savedScroll; }));
+}
+function openDetail(id){
+  const j=col.find(x=>x.id===id);if(!j)return;
+  const c=j.catalogId?CATALOG.find(x=>x.id===j.catalogId):null;
+  const imgSrc=(j.img!=null&&j.img>=0)?IMGS[j.img]:"";
+  const catLbl=CAT_LABELS[j.cat]||"Original",catCls=CAT_CLS[j.cat]||"bc-orig";
+  const num=c?c.num:(j.num||10);
+  const titlesHTML=c&&c.titles&&c.titles.length?c.titles.map(t=>`<span class="title-chip">🏆 ${t}</span>`).join(""):`<span class="no-titles">Sin títulos esta temporada</span>`;
+  document.getElementById("detSheet").innerHTML=`
+    <div class="handle"></div>
+    <div class="det-hero">${imgSrc?`<img src="${imgSrc}" alt="">`:`<span style="font-size:65px;display:flex;align-items:center;justify-content:center;height:220px">👕</span>`}</div>
+    <div class="det-meta">
+      <div class="det-club">${j.club} · ${j.year}</div>
+      <div class="det-name">${j.name}</div>
+      <div class="det-tags">
+        <span class="tag ${catCls}" style="color:#fff">${catLbl}</span>
+        <span class="tag">#${num}</span>
+        <span style="font-size:11px">${stars(j.cond||3)}</span>
+      </div>
+    </div>
+    ${c?`<div class="stats-grid">
+      <div class="stat-box"><div class="stat-val">${c.goals||0}</div><div class="stat-lbl">⚽ Goles temporada</div></div>
+      <div class="stat-box"><div class="stat-val">${c.assists||0}</div><div class="stat-lbl">🎯 Asistencias</div></div>
+    </div>
+    <div class="titles-sec">
+      <div class="titles-lbl">🏆 TÍTULOS ESTA TEMPORADA</div>
+      <div class="titles-list">${titlesHTML}</div>
+    </div>`:""}
+    <div class="det-acts">
+      <button class="btn-del" onclick="delJ('${j.id}')">Eliminar</button>
+      <button class="btn-cls" onclick="document.getElementById('detOv').classList.remove('open')">Cerrar</button>
+    </div>`;
+  document.getElementById("detOv").classList.add("open");
+}
+function delJ(id){if(!confirm("¿Eliminar?"))return;col=col.filter(j=>j.id!==id);save();document.getElementById("detOv").classList.remove("open");render();}
+function openAdd(){document.getElementById("addOv").classList.add("open");}
+function saveCustom(){
+  const name=document.getElementById("fn").value.trim();if(!name){alert("Poné un nombre");return;}
+  col.unshift({id:Date.now().toString(),name,club:document.getElementById("fc").value,year:parseInt(document.getElementById("fy").value)||new Date().getFullYear(),cat:document.getElementById("fcat").value,type:document.getElementById("ftype").value,cond:parseInt(document.getElementById("fcond").value),img:-1,num:10,fav:false});
+  save();document.getElementById("addOv").classList.remove("open");
+  mainTab="col";document.querySelectorAll(".mtab").forEach(t=>t.classList.toggle("on",t.dataset.tab==="col"));render();
+}
+function bgc(e,id){if(e.target.id===id)document.getElementById(id).classList.remove("open")}
+render();
+
+</script>
+</body>
+</html>
